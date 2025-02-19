@@ -15,7 +15,7 @@ export default function AddPlayer() {
     if (showToast) {
       const timer = setTimeout(() => {
         setShowToast(false);
-      }, 5000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }

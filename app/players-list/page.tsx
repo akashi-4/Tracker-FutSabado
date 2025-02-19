@@ -3,25 +3,11 @@ import { useState, useEffect } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import type { Player } from "../../types/playerType";
 
-type PlayerForm = {
-  [K in keyof Player]: string;
-};
-
 function Page() {
-  const [error, setError] = useState<string | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
-  const [player, setPlayer] = useState<PlayerForm>({
-    name: "",
-    goals: "",
-    assists: "",
-    wins: "",
-    losses: "",
-    draws: "",
-    matches: "",
-    goals_partic: "",
-  });
+
   const fetchPlayers = async () => {
     const res = await fetch("/api/players");
     const data = await res.json();
@@ -81,23 +67,8 @@ function Page() {
     
   };
 
-  const validateForm = () => {
-    const numericFields = ["goals", "assists", "wins", "losses", "draws", "matches", "goals_partic"];
-    for (const field of numericFields) {
-      if (player[field as keyof PlayerForm] !== "" && !/^\d+$/.test(player[field as keyof PlayerForm])) {
-        setError(`${field.charAt(0).toUpperCase() + field.slice(1)} must be a valid number`);
-        return false;
-      }
-    }
-    return true;
-  };
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    // Validate the form before submitting
-    if (!validateForm()) {
-      return;
-    }
   
     if (editingPlayer) {
       const updatedMatches = editingPlayer.wins + editingPlayer.losses + editingPlayer.draws;

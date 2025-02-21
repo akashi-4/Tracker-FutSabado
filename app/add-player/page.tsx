@@ -59,6 +59,14 @@ export default function AddPlayer() {
     return true;
   };
 
+  const calculateMatches = () => {
+    return parseInt(player.draws) + parseInt(player.wins) + parseInt(player.losses);
+  };
+
+  const calculateGoalsPartic = () => {
+    return parseInt(player.goals) + parseInt(player.assists);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -73,8 +81,8 @@ export default function AddPlayer() {
       wins: player.wins ? parseInt(player.wins) : 0,
       losses: player.losses ? parseInt(player.losses) : 0,
       draws: player.draws ? parseInt(player.draws) : 0,
-      matches: player.matches ? parseInt(player.matches) : 0,
-      goals_partic: player.goals_partic ? parseInt(player.goals_partic) : 0,
+      matches: calculateMatches(),
+      goals_partic: calculateGoalsPartic(),
     };
 
     const res = await fetch("/api/players", {

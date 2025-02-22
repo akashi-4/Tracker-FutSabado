@@ -69,33 +69,32 @@ function Page() {
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    if (editingPlayer) {
+    if (editingPlayer && players.length > 0) {
+      const originalPlayer = players.find(p => p.name === editingPlayer.name);
+      if (!originalPlayer) return;
+
       const updatedMatches = editingPlayer.wins + editingPlayer.losses + editingPlayer.draws;
       const updatedGoalsPartic = editingPlayer.goals + editingPlayer.assists;
-  
-      const playerData: Player = {
-        ...editingPlayer,
-        goals: editingPlayer.goals ? parseInt(editingPlayer.goals.toString()) : 0,
-        assists: editingPlayer.assists ? parseInt(editingPlayer.assists.toString()) : 0,
-        wins: editingPlayer.wins ? parseInt(editingPlayer.wins.toString()) : 0,
-        losses: editingPlayer.losses ? parseInt(editingPlayer.losses.toString()) : 0,
-        draws: editingPlayer.draws ? parseInt(editingPlayer.draws.toString()) : 0,
-        matches: updatedMatches,
-        goals_partic: updatedGoalsPartic,
-      };
       
-      handleUpdate(playerData.name, "goals", playerData.goals);
-      handleUpdate(playerData.name, "assists", playerData.assists);
-      handleUpdate(playerData.name, "wins", playerData.wins);
-      handleUpdate(playerData.name, "losses", playerData.losses);
-      handleUpdate(playerData.name, "draws", playerData.draws);
-      handleUpdate(playerData.name, "matches", playerData.matches);
-      handleUpdate(playerData.name, "goals_partic", playerData.goals_partic);
+      const updates = [
+        { field: 'goals', value: editingPlayer.goals, original: originalPlayer.goals },
+        { field: 'assists', value: editingPlayer.assists, original: originalPlayer.assists },
+        { field: 'wins', value: editingPlayer.wins, original: originalPlayer.wins },
+        { field: 'losses', value: editingPlayer.losses, original: originalPlayer.losses },
+        { field: 'draws', value: editingPlayer.draws, original: originalPlayer.draws },
+        { field: 'matches', value: updatedMatches, original: originalPlayer.matches },
+        { field: 'goals_partic', value: updatedGoalsPartic, original: originalPlayer.goals_partic }
+      ];
 
+      for (const { field, value, original } of updates) {
+        if (value !== original) {
+          await handleUpdate(editingPlayer.name, field, value);
+        }
+      }
+      
       alert("Player updated!");
-  
-      setIsModalOpen(false); // Close the modal
-      fetchPlayers(); // Refresh the list after update
+      setIsModalOpen(false);
+      fetchPlayers();
     }
   };
   

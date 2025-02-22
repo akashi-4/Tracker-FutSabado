@@ -47,17 +47,19 @@ export async function DELETE(req: Request) {
 // **PATCH: Update player stats (goals, assists, etc.)**
 export async function PATCH(req: Request) {
   try {
-    const { name, field, value } = await req.json(); // Receive player name, field, and new value
+    const { name, field, value } = await req.json();
     const db = await connect2DB();
+
+    // First check if the player exists
+    const playerExists = await db.collection("players").findOne({ name });
+    if (!playerExists) {
+      return NextResponse.json({ message: "Player not found" }, { status: 404 });
+    }
 
     const updatedPlayer = await db.collection("players").updateOne(
       { name },
       { $set: { [field]: value } }
     );
-
-    if (updatedPlayer.modifiedCount === 0) {
-      return NextResponse.json({ message: "Player not found" }, { status: 404 });
-    }
 
     return NextResponse.json({ message: `${field} updated successfully` });
   } catch (error) {

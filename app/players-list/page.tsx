@@ -42,7 +42,6 @@ function Page() {
     });
 
     if (res.ok) {
-      alert("Player updated!");
       fetchPlayers(); // Refresh the list after update
     } else {
       const data = await res.json();
@@ -92,6 +91,8 @@ function Page() {
       handleUpdate(playerData.name, "draws", playerData.draws);
       handleUpdate(playerData.name, "matches", playerData.matches);
       handleUpdate(playerData.name, "goals_partic", playerData.goals_partic);
+
+      alert("Player updated!");
   
       setIsModalOpen(false); // Close the modal
       fetchPlayers(); // Refresh the list after update

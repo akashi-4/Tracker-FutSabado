@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connect2DB } from "../../../../config/db";
 
 export async function GET(
-    _request: Request,
-    context: { params: { name: string } }
-) {
+    _request: NextRequest,
+    { params }: { params: { name: string } }
+): Promise<NextResponse> {
     try {
-        const { name } = await Promise.resolve(context.params);
+        const { name } = params;
 
         if (!name) {
             return NextResponse.json(

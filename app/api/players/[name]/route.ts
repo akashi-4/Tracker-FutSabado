@@ -27,8 +27,9 @@ export async function GET(
 
         return NextResponse.json(player);
     } catch (error) {
+        console.error("Error fetching player:", error);
         return NextResponse.json(
-            { message: "Error fetching player" + error },
+            { message: "Error fetching player" },
             { status: 500 }
         );
     }

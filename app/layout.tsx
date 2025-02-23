@@ -1,17 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const playerLinks = [
   { href: "/player/add-player", label: "Add Player" },
@@ -31,13 +20,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Navigation Bar */}
+    <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
+      <body>
         <nav className="bg-black text-blue-400 p-4 flex justify-between font-bold">
           <h1 className="text-xl font-bold">Futebolada</h1>
           <div className="space-x-6">
@@ -80,9 +71,7 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
-        
-        {/* Page Content */}
-        <main className="p-6">{children}</main>
+        {children}
       </body>
     </html>
   );

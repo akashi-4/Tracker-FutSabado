@@ -173,7 +173,6 @@ export default function AddMatch() {
             <div className="max-w-6xl mx-auto">
                 <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
                     <h2 className="text-3xl font-bold text-blue-400 mb-8">Add Match</h2>
-                    
                     <div className="flex justify-between gap-8">
                         {/* Team A Side */}
                         <div className="flex-1">

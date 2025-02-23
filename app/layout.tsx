@@ -35,18 +35,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+<<<<<<< Updated upstream
     <html>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* Navigation Bar */}
         <nav className="bg-black text-blue-400 p-4 flex justify-between font-bold">
           <h1 className="text-xl font-bold">Futebolada</h1>
           <div className="space-x-6">
+=======
+    <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
+      <body>
+        <nav className="bg-black text-blue-400 p-4 flex flex-col sm:flex-row justify-between font-bold">
+          <h1 className="text-xl font-bold mb-4 sm:mb-0">Futebolada</h1>
+          <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
+>>>>>>> Stashed changes
             <Link href="/" className="hover:underline">Home</Link>
             
             {/* Player Dropdown */}
-            <div className="inline-block relative group">
+            <div className="relative group">
               <span className="cursor-pointer hover:underline">Player</span>
-              <div className="absolute hidden group-hover:block w-40 right-0 pt-2">
+              <div className="absolute hidden group-hover:block w-40 right-0 pt-2 z-50">
                 <div className="bg-black border border-blue-900 rounded-lg shadow-lg p-2 space-y-2">
                   {playerLinks.map((link) => (
                     <Link 

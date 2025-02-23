@@ -15,6 +15,7 @@ export default function PlayerSelector({ players, team, onPlayerSelect, selected
   return (
     <div className="mb-6">
       <h3 className="text-xl font-bold text-blue-400 mb-4">Team {team}</h3>
+<<<<<<< Updated upstream
       <div className="grid grid-cols-5 gap-4">
         {[0, 1, 2, 3, 4].map((position) => (
           <div key={position} className="relative">
@@ -27,6 +28,14 @@ export default function PlayerSelector({ players, team, onPlayerSelect, selected
                 }
               }}
               className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white hover:border-blue-500"
+=======
+      <div className="grid grid-rows-5 gap-4 w-full max-w-lg mx-auto">
+        {[0, 1, 2, 3, 4].map((position) => (
+          <div key={position} className="relative w-full">
+            <div
+              onClick={() => setShowDropdown(position)}
+              className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white hover:border-blue-500 flex justify-between items-center cursor-pointer text-sm sm:text-base"
+>>>>>>> Stashed changes
             >
               {selectedPlayers[position]?.name || `Player ${position + 1}`}
             </button>

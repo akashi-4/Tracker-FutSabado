@@ -48,17 +48,13 @@ export default function ShowStats() {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12 text-blue-400">
-          Player Statistics
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <StatCard title="Top Scorers" data={topScorers} statKey="goals" />
-          <StatCard title="Most Matches" data={topMatches} statKey="matchesPlayed" />
-          <StatCard title="Most Wins" data={topWinners} statKey="wins" />
-          <StatCard title="Most Losses" data={topLosers} statKey="losses" />
-        </div>
+    <div className="p-4 md:p-8">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-blue-400">Player Statistics</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <StatCard title="Top Scorers" data={topScorers} statKey="goals" />
+        <StatCard title="Most Matches" data={topMatches} statKey="matchesPlayed" />
+        <StatCard title="Most Wins" data={topWinners} statKey="wins" />
+        <StatCard title="Most Losses" data={topLosers} statKey="losses" />
       </div>
     </div>
   );

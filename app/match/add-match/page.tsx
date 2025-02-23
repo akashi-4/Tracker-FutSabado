@@ -186,7 +186,7 @@ export default function AddMatch() {
                             />
                             {/* Goals Section */}
                             <div className="mt-6 space-y-4">
-                                {match.teamA.players.map((player, index) => (
+                                {match.teamA.players.map((player) => (
                                     player && (
                                         <div key={player.name} className="flex justify-between items-center">
                                             <span>{player.name}</span>
@@ -212,7 +212,7 @@ export default function AddMatch() {
                             />
                             {/* Goals Section */}
                             <div className="mt-6 space-y-4">
-                                {match.teamB.players.map((player, index) => (
+                                {match.teamB.players.map((player) => (
                                     player && (
                                         <div key={player.name} className="flex justify-between items-center">
                                             <span>{player.name}</span>

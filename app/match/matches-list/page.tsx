@@ -119,11 +119,6 @@ function Page() {
         }
     };
 
-    const getHowManyGoalsThatPlayerScoredInThisMatch = (match: Match, player: Player) => {
-        const goals = match.goals.find(g => g.scorer.name === player.name);
-        return goals ? goals.count : 0;
-    }
-
     const getHowManyWinsThatPlayerGotInThisMatch = (match: Match, player: Player) => {
         const playerWasInTeamA = match.teamA.players.some(p => p?.name === player.name);
         const playerWasInTeamB = match.teamB.players.some(p => p?.name === player.name);

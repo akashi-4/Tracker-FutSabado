@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Match } from "../../../types/matchType";
 import type { Goal } from "../../../types/goalType";
 import type { Player } from "../../../types/playerType";
 import PlayerSelector from "../../../components/PlayerSelector";
@@ -22,9 +21,7 @@ type MatchForm = {
 
 export default function AddMatch() {
     const [showToast, setShowToast] = useState(false);
-    const [addedMatch, setAddedMatch] = useState<Match | null>(null);
     const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
-    const [players, setPlayers] = useState<Player[]>([]);
     useEffect(() => {
         if (showToast) {
             const timer = setTimeout(() => {
@@ -38,7 +35,7 @@ export default function AddMatch() {
     const fetchPlayers = async () => {
         const res = await fetch("/api/players");
         const data = await res.json();
-        setPlayers(data);
+        setAvailablePlayers(data);
       };
     const [match, setMatch] = useState<MatchForm>({
         date: new Date().toISOString().split('T')[0],

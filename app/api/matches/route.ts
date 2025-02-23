@@ -37,7 +37,7 @@ export async function DELETE(req: Request) {
         );
     } catch (error) {
         return NextResponse.json(
-            { message: "Error deleting match" }, 
+            { message: "Error deleting match " + error }, 
             { status: 500 }
         );
     }

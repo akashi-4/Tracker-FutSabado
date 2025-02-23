@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Pencil, Trash2 } from "lucide-react";
-import type { Player } from "../../types/playerType";
+import type { Player } from "../../../types/playerType";
 
 function Page() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
+  
   const fetchPlayers = async () => {
     const res = await fetch("/api/players");
     const data = await res.json();
@@ -34,11 +35,11 @@ function Page() {
     }
   };
 
-  const handleUpdate = async (name: string, field: string, value: number) => {
+  const handleUpdate = async (name: string, updates: Partial<Player>) => {
     const res = await fetch("/api/players", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, field, value }),
+      body: JSON.stringify({ name, updates }),
     });
 
     if (res.ok) {
@@ -74,23 +75,16 @@ function Page() {
       if (!originalPlayer) return;
 
       const updatedMatches = editingPlayer.wins + editingPlayer.losses + editingPlayer.draws;
-      const updatedGoalsPartic = editingPlayer.goals + editingPlayer.assists;
       
-      const updates = [
-        { field: 'goals', value: editingPlayer.goals, original: originalPlayer.goals },
-        { field: 'assists', value: editingPlayer.assists, original: originalPlayer.assists },
-        { field: 'wins', value: editingPlayer.wins, original: originalPlayer.wins },
-        { field: 'losses', value: editingPlayer.losses, original: originalPlayer.losses },
-        { field: 'draws', value: editingPlayer.draws, original: originalPlayer.draws },
-        { field: 'matches', value: updatedMatches, original: originalPlayer.matches },
-        { field: 'goals_partic', value: updatedGoalsPartic, original: originalPlayer.goals_partic }
-      ];
+      const updates = {
+        goals: editingPlayer.goals,
+        wins: editingPlayer.wins,
+        losses: editingPlayer.losses,
+        draws: editingPlayer.draws,
+        matchesPlayed: updatedMatches
+      };
 
-      for (const { field, value, original } of updates) {
-        if (value !== original) {
-          await handleUpdate(editingPlayer.name, field, value);
-        }
-      }
+      await handleUpdate(editingPlayer.name, updates);
       
       alert("Player updated!");
       setIsModalOpen(false);
@@ -117,11 +111,11 @@ function Page() {
                     <div className="flex items-baseline gap-4">
                       <h3 className="text-xl font-semibold text-white">{p.name}</h3>
                       <span className="text-blue-400">
-                        {p.goals}G {p.assists}A
+                        {p.goals}G
                       </span>
                     </div>
                     <div className="text-gray-400 text-sm mt-1">
-                      {p.wins}W {p.draws}D {p.losses}L | {p.matches} matches
+                      {p.wins}W {p.draws}D {p.losses}L | {p.matchesPlayed} matches
                     </div>
                   </div>
                   <div className="flex gap-3 ml-4">

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect} from "react";
-import type { Player } from "../../types/playerType";
+import type { Player } from "../../../types/playerType";
 import { CheckCircle2 } from "lucide-react";
 
 type PlayerForm = {
@@ -23,25 +23,24 @@ export default function AddPlayer() {
   const [player, setPlayer] = useState<PlayerForm>({
     name: "",
     goals: "",
-    assists: "",
     wins: "",
     losses: "",
     draws: "",
-    matches: "",
-    goals_partic: "",
+    matchesPlayed: "",
   });
 
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+    // Check if the field is not the name field and if the value is not empty
     if (name !== "name" && value !== "") {
+      // Check if the value is a number
       if (!/^\d+$/.test(value)) {
         return;
       }
     }
-
+   
     setPlayer((prev) => ({
       ...prev,
       [name]: value,
@@ -49,7 +48,7 @@ export default function AddPlayer() {
   };
 
   const validateForm = () => {
-    const numericFields = ["goals", "assists", "wins", "losses", "draws", "matches", "goals_partic"];
+    const numericFields = ["goals", "wins", "losses", "draws", "matchesPlayed"];
     for (const field of numericFields) {
       if (player[field as keyof PlayerForm] !== "" && !/^\d+$/.test(player[field as keyof PlayerForm])) {
         setError(`${field.charAt(0).toUpperCase() + field.slice(1)} must be a valid number`);
@@ -63,10 +62,6 @@ export default function AddPlayer() {
     return parseInt(player.draws) + parseInt(player.wins) + parseInt(player.losses);
   };
 
-  const calculateGoalsPartic = () => {
-    return parseInt(player.goals) + parseInt(player.assists);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -77,12 +72,10 @@ export default function AddPlayer() {
     const playerData: Player = {
       ...player,
       goals: player.goals ? parseInt(player.goals) : 0,
-      assists: player.assists ? parseInt(player.assists) : 0,
       wins: player.wins ? parseInt(player.wins) : 0,
       losses: player.losses ? parseInt(player.losses) : 0,
       draws: player.draws ? parseInt(player.draws) : 0,
-      matches: calculateMatches(),
-      goals_partic: calculateGoalsPartic(),
+      matchesPlayed: calculateMatches(),
     };
 
     const res = await fetch("/api/players", {
@@ -97,12 +90,10 @@ export default function AddPlayer() {
       setPlayer({
         name: "",
         goals: "",
-        assists: "",
         wins: "",
         losses: "",
         draws: "",
-        matches: "",
-        goals_partic: "",
+        matchesPlayed: "",
       });
       setError(null);
     } else {
@@ -150,7 +141,7 @@ export default function AddPlayer() {
               />
             </div>
             
-            {["goals", "assists", "wins", "losses", "draws"].map((field) => (
+            {["goals", "wins", "losses", "draws"].map((field) => (
               <div key={field} className="space-y-2">
                 <label htmlFor={field} className="block text-blue-400 font-medium capitalize">
                   {field}

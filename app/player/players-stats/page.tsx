@@ -1,20 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
-import type { Player } from "../../types/playerType";
+import type { Player } from "../../../types/playerType";
 
 export default function ShowStats() {
   const [topScorers, setTopScorers] = useState<Player[]>([]);
-  const [topAssisters, setTopAssisters] = useState<Player[]>([]);
   const [topMatches, setTopMatches] = useState<Player[]>([]);
-  const [topGoalsPartic, setTopGoalsPartic] = useState<Player[]>([]);
+  const [topWinners, setTopWinners] = useState<Player[]>([]);
+  const [topLosers, setTopLosers] = useState<Player[]>([]);
 
   const fetchStats = async () => {
     const res = await fetch("/api/players/stats");
     const data = await res.json();
     setTopScorers(data.topScorers);
-    setTopAssisters(data.topAssisters);
     setTopMatches(data.topMatches);
-    setTopGoalsPartic(data.topGoalsPartic);
+    setTopWinners(data.topWinners);
+    setTopLosers(data.topLosers);
   };
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function ShowStats() {
                 <span className="text-white">{player.name}</span>
               </span>
               <span className="text-blue-400 font-semibold">
-                {player[statKey]} {statKey === 'goals' ? 'goals' : statKey === 'assists' ? 'assists' : statKey === 'goals_partic' ? 'G+A' : 'matches'}
+                {player[statKey]} {statKey === 'goals' ? 'goals' : statKey === 'matchesPlayed' ? 'matches' : statKey === 'losses' ? 'losses' : 'wins'}
               </span>
             </li>
           ))
@@ -55,13 +55,9 @@ export default function ShowStats() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <StatCard title="Top Scorers" data={topScorers} statKey="goals" />
-          <StatCard title="Top Assisters" data={topAssisters} statKey="assists" />
-          <StatCard 
-            title="Most Goal Contributions" 
-            data={topGoalsPartic} 
-            statKey="goals_partic" 
-          />
-          <StatCard title="Most Matches" data={topMatches} statKey="matches" />
+          <StatCard title="Most Matches" data={topMatches} statKey="matchesPlayed" />
+          <StatCard title="Most Wins" data={topWinners} statKey="wins" />
+          <StatCard title="Most Losses" data={topLosers} statKey="losses" />
         </div>
       </div>
     </div>

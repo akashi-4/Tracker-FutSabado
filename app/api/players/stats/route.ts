@@ -6,40 +6,66 @@ export async function GET() {
     const db = await connect2DB();
     
     // Execute all queries in parallel using Promise.all
-    const [topScorers, topAssisters, topMatches, topGoalsPartic] = await Promise.all([
+    const [topScorers, topMatches, topWinners, topLosers] = await Promise.all([
       db.collection("players").aggregate([
         { $sort: { goals: -1 } },
         { $limit: 10 },
         { $project: { _id: 0, name: 1, goals: 1 } }
       ]).toArray(),
-      
+    
       db.collection("players").aggregate([
-        { $sort: { assists: -1 } },
+        { $sort: { matchesPlayed: -1 } },
         { $limit: 10 },
-        { $project: { _id: 0, name: 1, assists: 1 } }
+        { $project: { _id: 0, name: 1, matchesPlayed: 1 } }
       ]).toArray(),
       
+
       db.collection("players").aggregate([
-        { $sort: { matches: -1 } },
+        { $sort: { wins: -1 } },
         { $limit: 10 },
-        { $project: { _id: 0, name: 1, matches: 1 } }
+        { $project: { _id: 0, name: 1, wins: 1 } }
       ]).toArray(),
-      
+
       db.collection("players").aggregate([
-        { $sort: { goals_partic: -1 } },
+        { $sort: { losses: -1 } },
         { $limit: 10 },
-        { $project: { _id: 0, name: 1, goals_partic: 1 } }
-      ]).toArray()
+        { $project: { _id: 0, name: 1, losses: 1 } }
+      ]).toArray(),
+
     ]);
 
     return NextResponse.json({
       topScorers,
-      topAssisters,
       topMatches,
-      topGoalsPartic
+      topWinners,
+      topLosers
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
     return NextResponse.json({ message: "Error fetching player stats" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const { name, updates } = await req.json();
+    const db = await connect2DB();
+
+    // Update the player
+    const result = await db.collection("players").updateOne(
+      { name },
+      { $set: updates }
+    );
+
+    if (result.modifiedCount === 0) {
+      return NextResponse.json({ message: `Failed to update player ${name}` }, { status: 400 });
+    }
+
+    return NextResponse.json({ message: "Player updated successfully" });
+  } catch (error) {
+    console.error('Error updating player:', error);
+    return NextResponse.json({ 
+      message: `Error updating player: ${error instanceof Error ? error.message : 'Unknown error'}`
+    }, { status: 500 });
   }
 }

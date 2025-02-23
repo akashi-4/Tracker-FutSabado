@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect2DB } from "../../../../config/db";
 
-type Props = {
-    params: {
-        name: string;
-    };
-};
-
 export async function GET(
-    _request: NextRequest,
-    { params }: Props
+    _request: Request,
+    { params }: { params: Promise<{ name: string }> }
 ): Promise<NextResponse> {
     try {
-        const { name } = params;
+        const name = (await params).name;
 
         if (!name) {
             return NextResponse.json(

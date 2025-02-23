@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect2DB } from "../../../../config/db";
 
+type Props = {
+    params: {
+        name: string;
+    };
+};
+
 export async function GET(
     _request: NextRequest,
-    { params }: { params: { name: string } }
+    { params }: Props
 ): Promise<NextResponse> {
     try {
         const { name } = params;

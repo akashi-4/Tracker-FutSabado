@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connect2DB } from "../../../../config/db";
 
 export async function GET(
-    request: Request,
+    _request: Request,
     context: { params: { name: string } }
 ) {
     try {
@@ -28,7 +28,7 @@ export async function GET(
         return NextResponse.json(player);
     } catch (error) {
         return NextResponse.json(
-            { message: "Error fetching player " + error },
+            { message: "Error fetching player" },
             { status: 500 }
         );
     }

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
 
 const playerLinks = [
   { href: "/player/add-player", label: "Add Player" },
@@ -26,13 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        {/* Navigation Bar */}
-        <nav className="bg-black-700 text-blue-400 p-4 flex justify-between font-bold">
+      <body>
+        <nav className="bg-black text-blue-400 p-4 flex justify-between font-bold">
           <h1 className="text-xl font-bold">Futebolada</h1>
           <div className="space-x-6 flex items-center">
             <Link href="/" className="hover:underline">Home</Link>

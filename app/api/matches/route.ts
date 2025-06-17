@@ -1,7 +1,6 @@
-
 import { connect2DB } from "../../../config/db";
 import { ObjectId } from "mongodb";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/auth";
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 

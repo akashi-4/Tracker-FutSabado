@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connect2DB } from "../../../config/db";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/auth";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 

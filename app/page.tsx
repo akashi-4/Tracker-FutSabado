@@ -2,7 +2,7 @@
 
 export default function Home() {
   const handleGetStarted = () => {
-    window.location.href = '/player/add-player'
+    window.location.href = '/player/players-list'
   }
 
   return (

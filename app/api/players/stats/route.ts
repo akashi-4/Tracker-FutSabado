@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { connect2DB } from "../../../../config/db";
+import { authOptions } from "../../auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
 
 export async function GET() {
   try {
@@ -47,6 +49,12 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+
+  const session = await getServerSession(authOptions);
+  if(!session || session.user.role !== "admin") {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const { name, updates } = await req.json();
     const db = await connect2DB();

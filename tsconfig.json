@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["next-auth"],
     "target": "ES2017",
     "lib": [
       "dom",
@@ -27,8 +28,10 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "next.config.js"  ],
+    "**/*.tsx",
+    "next.config.js",
+    "types/next-auth.d.ts"
+  ],
   "exclude": [
     "node_modules"
   ]

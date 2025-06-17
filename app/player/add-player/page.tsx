@@ -1,25 +1,17 @@
 "use client";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import type { Player } from "../../../types/playerType";
-import { CheckCircle2 } from "lucide-react";
+import Toast, { useToast } from "../../../components/Toast";
 
 type PlayerForm = {
   [K in keyof Player]: string;
 };
 
 export default function AddPlayer() {
-  const [showToast, setShowToast] = useState(false);
-  const [addedPlayerName, setAddedPlayerName] = useState("");
+  const { toast, showToast, hideToast } = useToast();
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => {
-        setShowToast(false);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showToast]);
   const [player, setPlayer] = useState<PlayerForm>({
     name: "",
     goals: "",
@@ -85,8 +77,7 @@ export default function AddPlayer() {
     });
 
     if (res.ok) {
-      setAddedPlayerName(player.name);
-      setShowToast(true);
+      showToast(`Player ${player.name} successfully added!`, "success");
       setPlayer({
         name: "",
         goals: "",
@@ -102,19 +93,26 @@ export default function AddPlayer() {
     }
   };
 
+  // Show loading state while session is being fetched
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  // If not logged in or not an admin, block access
+  if (!session || session.user.role !== "admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        You do not have permission to access this page.
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white py-12 px-6">
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-4 right-4 z-50 animate-slide-in">
-          <div className="bg-gray-900 border border-blue-900 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
-            <span className="font-medium">
-              Player <span className="text-blue-400">{addedPlayerName}</span> successfully added!
-            </span>
-          </div>
-        </div>
-      )}
       <div className="max-w-lg mx-auto">
         <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
           <h2 className="text-3xl font-bold text-center text-blue-400 mb-8">Create Player</h2>
@@ -171,6 +169,14 @@ export default function AddPlayer() {
           </form>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={toast.isVisible}
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
+      />
     </div>
   );
 }

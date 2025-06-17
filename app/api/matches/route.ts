@@ -1,6 +1,9 @@
-import { NextResponse } from "next/server";
+
 import { connect2DB } from "../../../config/db";
 import { ObjectId } from "mongodb";
+import { authOptions } from "../auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     const db = await connect2DB();
@@ -9,6 +12,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+
+    const session = await getServerSession(authOptions);
+    if(!session || session.user.role !== "admin") {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const match = await req.json();
     const db = await connect2DB();
     await db.collection("matches").insertOne(match);
@@ -16,6 +25,11 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+    const session = await getServerSession(authOptions);
+    if(!session || session.user.role !== "admin") {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     try {
         const { id } = await req.json();
         const db = await connect2DB();

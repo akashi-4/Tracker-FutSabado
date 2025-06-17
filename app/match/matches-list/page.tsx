@@ -1,11 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {  Trash2 } from "lucide-react";
 import type { Match } from "../../../types/matchType";
 import type { Player } from "../../../types/playerType";
+import DeleteMatchButton from "../../../components/DeleteMatchButton";
+import Toast, { useToast } from "../../../components/Toast";
+import ConfirmDialog from "../../../components/ConfirmDialog";
 
 function Page() {
+    const { toast, showToast, hideToast } = useToast();
+    const [deleteDialog, setDeleteDialog] = useState<{
+        isOpen: boolean;
+        match: Match | null;
+    }>({ isOpen: false, match: null });
     const [matches, setMatches] = useState<Match[]>([]);
 
     const fetchMatches = async () => {  
@@ -27,7 +34,6 @@ function Page() {
             
             if (!playerWasInTeamA && !playerWasInTeamB) return;
 
-            // Buscar stats atuais do jogador
             const playerRes = await fetch(`/api/players/${encodeURIComponent(player.name)}`);
             if (!playerRes.ok) {
                 throw new Error(`Failed to fetch player stats: ${playerRes.statusText}`);
@@ -38,7 +44,6 @@ function Page() {
                 throw new Error(`Player ${player.name} not found`);
             }
 
-            // Aqui está a correção - verificando se scorer é string ou objeto
             const playerGoal = match.goals.find(g => 
                 (typeof g.scorer === 'string' ? g.scorer : g.scorer.name) === player.name
             );
@@ -98,7 +103,16 @@ function Page() {
         }
     };
 
-    const handleDelete = async (match: Match) => {
+    const handleDeleteClick = (match: Match) => {
+        setDeleteDialog({ isOpen: true, match });
+    };
+
+    const handleDeleteConfirm = async () => {
+        const { match } = deleteDialog;
+        if (!match) return;
+
+        setDeleteDialog({ isOpen: false, match: null });
+
         try {
             await handlePlayersStatsWhenMatchIsDeleted(match);
             const res = await fetch("/api/matches", {
@@ -108,15 +122,19 @@ function Page() {
             });
 
             if (res.ok) {
-                alert("Match deleted!");
+                showToast("Match deleted successfully!", "success");
                 fetchMatches();
             } else {
                 const data = await res.json();
-                alert(data.message || "Error deleting match");
+                showToast(data.message || "Error deleting match", "error");
             }
         } catch (error) {
-            alert(error instanceof Error ? error.message : "Error deleting match");
+            showToast(error instanceof Error ? error.message : "Error deleting match", "error");
         }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteDialog({ isOpen: false, match: null });
     };
 
     const getHowManyWinsThatPlayerGotInThisMatch = (match: Match, player: Player) => {
@@ -165,12 +183,7 @@ function Page() {
                                         <span className="text-2xl font-bold text-blue-400">
                                             {match.teamA.score} - {match.teamB.score}
                                         </span>
-                                        <button
-                                            onClick={() => handleDelete(match)}
-                                            className="p-2 rounded-lg bg-gray-700 hover:bg-red-600"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <DeleteMatchButton match={match} onDelete={handleDeleteClick} />
                                     </div>
                                     
                                     <div className="flex justify-between mt-4">
@@ -200,6 +213,26 @@ function Page() {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={deleteDialog.isOpen}
+                title="Delete Match"
+                message={`Are you sure you want to delete this match? This action cannot be undone and will affect player statistics.`}
+                confirmText="Delete"
+                cancelText="Cancel"
+                variant="danger"
+                onConfirm={handleDeleteConfirm}
+                onCancel={handleDeleteCancel}
+            />
+
+            {/* Toast Notification */}
+            <Toast
+                isVisible={toast.isVisible}
+                message={toast.message}
+                type={toast.type}
+                onClose={hideToast}
+            />
         </div>
     )
 }

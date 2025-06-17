@@ -1,5 +1,3 @@
-import { Goal } from "./goalType";
-
 export interface Player {
     name: string;
     goals: number;

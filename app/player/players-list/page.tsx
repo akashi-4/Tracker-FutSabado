@@ -1,12 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Pencil, Trash2 } from "lucide-react";
 import type { Player } from "../../../types/playerType";
+import DeletePlayerButton from "../../../components/DeletePlayerButton";
+import EditPlayerButton from "../../../components/EditPlayerButton";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import Toast, { useToast } from "../../../components/Toast";
 
 function Page() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    playerName: string;
+  }>({ isOpen: false, playerName: "" });
+  const { toast, showToast, hideToast } = useToast();
 
   
   const fetchPlayers = async () => {
@@ -19,20 +27,31 @@ function Page() {
     fetchPlayers();
   }, []);
 
-  const handleDelete = async (name: string) => {
+  const handleDeleteClick = (name: string) => {
+    setDeleteDialog({ isOpen: true, playerName: name });
+  };
+
+  const handleDeleteConfirm = async () => {
+    const { playerName } = deleteDialog;
+    setDeleteDialog({ isOpen: false, playerName: "" });
+
     const res = await fetch("/api/players", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name: playerName }),
     });
 
     if (res.ok) {
-      alert("Player deleted!");
-      fetchPlayers(); // Refresh the list after deletion
+      showToast("Player deleted successfully!", "success");
+      fetchPlayers();
     } else {
       const data = await res.json();
-      alert(data.message || "Error deleting player");
+      showToast(data.message || "Error deleting player", "error");
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialog({ isOpen: false, playerName: "" });
   };
 
   const handleUpdate = async (name: string, updates: Partial<Player>) => {
@@ -46,7 +65,7 @@ function Page() {
       fetchPlayers(); // Refresh the list after update
     } else {
       const data = await res.json();
-      alert(data.message || "Error updating player");
+      showToast(data.message || "Error updating player", "error");
     }
   };
 
@@ -86,7 +105,7 @@ function Page() {
 
       await handleUpdate(editingPlayer.name, updates);
       
-      alert("Player updated!");
+      showToast("Player updated successfully!", "success");
       setIsModalOpen(false);
       fetchPlayers();
     }
@@ -119,20 +138,8 @@ function Page() {
                     </div>
                   </div>
                   <div className="flex gap-3 ml-4">
-                    <button
-                      onClick={() => handleEdit(p)}
-                      className="p-2 rounded-lg bg-gray-700 hover:bg-blue-600 
-                               transition-colors duration-300"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(p.name)}
-                      className="p-2 rounded-lg bg-gray-700 hover:bg-red-600 
-                               transition-colors duration-300"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <EditPlayerButton player={p} onEdit={handleEdit} />
+                    <DeletePlayerButton player={p} onDelete={handleDeleteClick} />
                   </div>
                 </div>
               ))
@@ -190,6 +197,26 @@ function Page() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        title="Delete Player"
+        message={`Are you sure you want to delete "${deleteDialog.playerName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        isVisible={toast.isVisible}
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
+      />
     </div>
   );
 }

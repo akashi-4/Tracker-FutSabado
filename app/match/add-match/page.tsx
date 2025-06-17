@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import type { Goal } from "../../../types/goalType";
 import type { Player } from "../../../types/playerType";
 import PlayerSelector from "../../../components/PlayerSelector";
@@ -20,6 +21,24 @@ type MatchForm = {
 };
 
 export default function AddMatch() {
+    const { data: session, status } = useSession();
+
+    if (status === "loading") {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black text-white">
+                Loading...
+            </div>
+        );
+    }
+
+    if (!session || session.user.role !== "admin") {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black text-white">
+                You do not have permission to access this page.
+            </div>
+        );
+    }
+
     const [showToast, setShowToast] = useState(false);
     const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
     useEffect(() => {

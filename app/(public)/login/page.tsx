@@ -30,17 +30,15 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto mt-10">
-      <h2 className="text-xl font-bold mb-4 text-white">Login</h2>
+    <form onSubmit={handleSubmit} className="form-container">
+      <h2 className="page-title">Login</h2>
 
       <input
         type="email"
         placeholder="you@example.com"
         value={email}
         onChange={e => setEmail(e.target.value)}
-        className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
-                 transition-colors hover:border-gray-600"
+        className="input-field"
         required
       />
 
@@ -49,19 +47,13 @@ function LoginForm() {
         placeholder="••••••••"
         value={password}
         onChange={e => setPass(e.target.value)}
-        className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
-                 transition-colors hover:border-gray-600"
+        className="input-field"
         required
       />
 
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="error-text">{error}</p>}
 
-      <button 
-        type="submit" 
-        className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md 
-                 hover:bg-blue-700 transition-all duration-300 font-semibold"
-      >
+      <button type="submit" className="btn-primary">
         Sign in
       </button>
     </form>
@@ -70,7 +62,7 @@ function LoginForm() {
 
 function LoginFallback() {
   return (
-    <div className="space-y-4 max-w-sm mx-auto mt-10">
+    <div className="form-container">
       <div className="animate-pulse">
         <div className="h-8 bg-gray-700 rounded mb-4"></div>
         <div className="h-12 bg-gray-700 rounded mb-4"></div>
@@ -83,9 +75,9 @@ function LoginFallback() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-6">
+    <div className="page-container">
       <div className="max-w-lg mx-auto">
-        <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
+        <div className="card">
           <Suspense fallback={<LoginFallback />}>
             <LoginForm />
           </Suspense>

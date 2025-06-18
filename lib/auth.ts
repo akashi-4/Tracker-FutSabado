@@ -15,7 +15,7 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("Incoming creds", credentials);
+        //console.log("Incoming creds", credentials);
 
         const client = await clientPromise;
         const user = await client
@@ -23,7 +23,7 @@ export const authOptions: AuthOptions = {
           .collection("users")
           .findOne({ email: credentials.email });
 
-        console.log("DB user", user);
+        //console.log("DB user", user);
 
         if (!user || !user.hashedPassword) return null;
 
@@ -31,7 +31,7 @@ export const authOptions: AuthOptions = {
           credentials.password,
           user.hashedPassword
         );
-        console.log("Password match?", match);
+        //console.log("Password match?", match);
 
         if (!match) return null;
 

@@ -113,28 +113,26 @@ function Page() {
   
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-6">
+    <div className="page-container">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
-          <h2 className="text-3xl font-bold text-blue-400 mb-8">Players List</h2>
+        <div className="card">
+          <h2 className="page-title-large">Players List</h2>
           <div className="space-y-4">
             {players.length > 0 ? (
               players.map((p) => (
-                <div 
-                  key={p.name} 
-                  className="bg-gray-800 p-4 rounded-lg border border-gray-700 
-                           hover:border-blue-700 transition-all duration-300 
-                           flex justify-between items-center"
+                <div
+                  key={p.name}
+                  className="player-card"
                 >
                   <div className="flex-grow">
                     <div className="flex items-baseline gap-4">
                       <h3 className="text-xl font-semibold text-white">{p.name}</h3>
-                      <span className="text-blue-400">
-                        {p.goals}G
+                      <span className="text-accent">
+                        {p.goals} goals
                       </span>
                     </div>
-                    <div className="text-gray-400 text-sm mt-1">
-                      {p.wins}W {p.draws}D {p.losses}L | {p.matchesPlayed} matches
+                    <div className="text-muted text-sm mt-1">
+                      Wins: {p.wins} | Losses: {p.losses} | Draws: {p.draws}
                     </div>
                   </div>
                   <div className="flex gap-3 ml-4">
@@ -144,7 +142,7 @@ function Page() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-400 text-center italic">No players to display</p>
+              <p className="text-muted text-center italic">No players to display</p>
             )}
           </div>
         </div>
@@ -152,15 +150,15 @@ function Page() {
 
       {/* Edit Modal */}
       {isModalOpen && editingPlayer && (
-        <div className="fixed inset-0 bg-black/75 flex justify-center items-center z-50">
-          <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg w-96">
-            <h2 className="text-2xl font-bold text-blue-400 mb-6">
+        <div className="modal-overlay">
+          <div className="modal-content-large">
+            <h2 className="page-title-large">
               Edit {editingPlayer.name}
             </h2>
             <form onSubmit={handleModalSubmit} className="space-y-4">
-              {["goals", "assists", "wins", "losses", "draws"].map((field) => (
+              {["goals", "wins", "losses", "draws"].map((field) => (
                 <div key={field} className="space-y-2">
-                  <label htmlFor={field} className="block text-blue-400 font-medium capitalize">
+                  <label htmlFor={field} className="label">
                     {field}
                   </label>
                   <input
@@ -169,28 +167,20 @@ function Page() {
                     value={editingPlayer[field as keyof Player]}
                     onChange={handleModalChange}
                     min="0"
-                    className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg 
-                             text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                             outline-none transition-colors hover:border-gray-600"
+                    className="input-field"
                   />
                 </div>
               ))}
-              
-              <div className="flex justify-end gap-4 mt-8">
+              <div className="flex justify-end gap-3">
+              <button type="submit" className="btn-primary">
+                  Save Changes
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-lg 
-                           hover:bg-gray-600 transition-colors duration-300"
+                  className="btn-secondary"
                 >
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg 
-                           hover:bg-blue-700 transition-colors duration-300"
-                >
-                  Save Changes
                 </button>
               </div>
             </form>
@@ -203,8 +193,8 @@ function Page() {
         isOpen={deleteDialog.isOpen}
         title="Delete Player"
         message={`Are you sure you want to delete "${deleteDialog.playerName}"? This action cannot be undone.`}
-        confirmText="Delete"
         cancelText="Cancel"
+        confirmText="Delete"
         variant="danger"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}

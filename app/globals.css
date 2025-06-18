@@ -2,6 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .input-field {
+    @apply w-full p-3 bg-gray-800/80 border border-gray-700 rounded-lg text-white 
+           focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
+           transition-colors hover:border-gray-600;
+  }
+  
+  .btn-primary {
+    @apply w-full bg-blue-600 text-white py-3 rounded-lg shadow-md 
+           hover:bg-blue-700 transition-all duration-300 font-semibold;
+  }
+  
+  .form-container {
+    @apply space-y-4 max-w-sm mx-auto mt-10;
+  }
+  
+  .page-container {
+    @apply min-h-screen text-white py-12 px-6;
+  }
+  
+  .card {
+    @apply bg-gray-900/80 p-8 rounded-xl border border-blue-900 shadow-lg;
+  }
+  
+  .error-text {
+    @apply text-red-500;
+  }
+  
+  .page-title {
+    @apply text-xl font-bold mb-4 text-white;
+  }
+  
+  .page-title-large {
+    @apply text-3xl font-bold text-center text-blue-400 mb-8;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600/80 transition-colors;
+  }
+  
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700/80 transition-colors;
+  }
+  
+  .btn-icon {
+    @apply p-2 rounded-lg bg-gray-700/80 hover:bg-blue-600/80 transition-colors;
+  }
+  
+  .btn-icon-danger {
+    @apply p-2 rounded-lg bg-gray-700/80 hover:bg-red-600/80 transition-colors;
+  }
+  
+  .btn-icon-edit {
+    @apply p-2 rounded-lg bg-gray-700/80 hover:bg-blue-600/80 transition-colors;
+  }
+  
+  .label {
+    @apply block text-blue-400 font-medium capitalize;
+  }
+  
+  .dropdown-menu {
+    @apply bg-black border border-blue-900 rounded-lg shadow-lg p-2 space-y-2;
+  }
+  
+  .dropdown-item {
+    @apply block hover:underline px-2 py-1 rounded hover:bg-gray-800;
+  }
+  
+  .stats-card {
+    @apply bg-gray-900/80 p-6 rounded-xl border border-blue-900 shadow-lg transition-transform hover:border-blue-700;
+  }
+  
+  .stats-item {
+    @apply flex justify-between items-center p-3 rounded-lg bg-gray-800/80 border border-gray-700 hover:border-blue-800 transition-colors;
+  }
+  
+  .player-card {
+    @apply bg-gray-800/80 p-4 rounded-lg border border-gray-700 hover:border-blue-800 transition-colors flex items-center justify-between;
+  }
+  
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/75 flex justify-center items-center z-50;
+  }
+  
+  .modal-content {
+    @apply bg-gray-900/90 p-6 rounded-xl border border-blue-900 shadow-lg w-96 max-w-[90vw];
+  }
+  
+  .modal-content-large {
+    @apply bg-gray-900/90 p-8 rounded-xl border border-blue-900 shadow-lg w-96;
+  }
+  
+  .text-muted {
+    @apply text-gray-400;
+  }
+  
+  .text-accent {
+    @apply text-blue-400;
+  }
+  
+  .loading-state {
+    @apply min-h-screen flex items-center justify-center text-white;
+  }
+  
+  .permission-denied {
+    @apply min-h-screen flex items-center justify-center text-white;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -16,8 +125,14 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  /* Add your background here */
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding-top: 84px;
 }
 /* Hide number input arrows for all browsers */
 input[type="number"] {

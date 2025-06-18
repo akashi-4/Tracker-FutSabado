@@ -64,11 +64,11 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="bg-black text-blue-400 font-bold w-full">
-      <div className="px-4 py-3 w-full !p-0">
+    <nav className="fixed top-0 left-0 right-0 bg-black/95 backdrop-blur-md text-blue-400 font-bold w-full z-50 border-b border-gray-800">
+      <div className="px-4 py-3 w-full">
         <div className="flex items-center justify-between w-full">
-            <Link href="/" className="text-xl font-bold hover:text-blue-300 transition-colors">
-              Futebolada
+            <Link href="/" className="text-2xl font-bold hover:text-blue-300 transition-colors">
+              Futeba
             </Link>
             
             {/* Mobile Menu Button */}
@@ -85,14 +85,14 @@ export default function NavBar() {
             <div className="relative group">
               <span className="cursor-pointer hover:underline">Player</span>
               <div className="absolute hidden group-hover:block w-40 right-0 pt-2 z-50">
-                <div className="bg-black border border-blue-900 rounded-lg shadow-lg p-2 space-y-2">
+                <div className="dropdown-menu">
                   {playerLinks
                     .filter((l) => !l.adminOnly || session?.user.role === "admin")
                     .map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="block hover:underline px-2 py-1 rounded hover:bg-gray-800"
+                        className="dropdown-item"
                       >
                         {link.label}
                       </Link>
@@ -105,14 +105,14 @@ export default function NavBar() {
             <div className="relative group">
               <span className="cursor-pointer hover:underline">Match</span>
               <div className="absolute hidden group-hover:block w-40 right-0 pt-2 z-50">
-                <div className="bg-black border border-blue-900 rounded-lg shadow-lg p-2 space-y-2">
+                <div className="dropdown-menu">
                   {matchLinks
                     .filter((l) => !l.adminOnly || session?.user.role === "admin")
                     .map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="block hover:underline px-2 py-1 rounded hover:bg-gray-800"
+                        className="dropdown-item"
                       >
                         {link.label}
                       </Link>

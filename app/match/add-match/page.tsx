@@ -25,7 +25,7 @@ export default function AddMatch() {
 
     if (status === "loading") {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-black text-white">
+            <div className="loading-state">
                 Loading...
             </div>
         );
@@ -33,7 +33,7 @@ export default function AddMatch() {
 
     if (!session || session.user.role !== "admin") {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-black text-white">
+            <div className="permission-denied">
                 You do not have permission to access this page.
             </div>
         );
@@ -188,10 +188,10 @@ export default function AddMatch() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white py-12 px-6">
+        <div className="page-container">
             <div className="max-w-6xl mx-auto">
-                <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
-                    <h2 className="text-3xl font-bold text-blue-400 mb-8">Add Match</h2>
+                <div className="card">
+                    <h2 className="page-title-large">Add Match</h2>
                     <div className="flex justify-between gap-8">
                         {/* Team A Side */}
                         <div className="flex-1">

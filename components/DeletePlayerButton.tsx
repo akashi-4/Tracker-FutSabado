@@ -14,11 +14,15 @@ export default function DeletePlayerButton({ player, onDelete }: Props) {
 
   if (session?.user.role !== "admin") return null;
 
+  const handleClick = () => {
+    onDelete(player.name);
+  };
+
   return (
     <button
-      onClick={() => onDelete(player.name)}
-      className="p-2 rounded-lg bg-gray-700 hover:bg-red-600"
-      title="Delete player"
+      onClick={handleClick}
+      className="btn-icon-danger"
+      title="Delete Player"
     >
       <Trash2 className="w-4 h-4" />
     </button>

@@ -96,7 +96,7 @@ export default function AddPlayer() {
   // Show loading state while session is being fetched
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="loading-state">
         Loading...
       </div>
     );
@@ -105,17 +105,17 @@ export default function AddPlayer() {
   // If not logged in or not an admin, block access
   if (!session || session.user.role !== "admin") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="permission-denied">
         You do not have permission to access this page.
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-6">
+    <div className="page-container">
       <div className="max-w-lg mx-auto">
-        <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
-          <h2 className="text-3xl font-bold text-center text-blue-400 mb-8">Create Player</h2>
+        <div className="card">
+          <h2 className="page-title-large">Create Player</h2>
           {error && (
             <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-6">
               {error}
@@ -123,7 +123,7 @@ export default function AddPlayer() {
           )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="name" className="block text-blue-400 font-medium">
+              <label htmlFor="name" className="label">
                 Name
               </label>
               <input
@@ -133,15 +133,13 @@ export default function AddPlayer() {
                 value={player.name}
                 onChange={handleChange}
                 required
-                className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
-                         transition-colors hover:border-gray-600"
+                className="input-field"
               />
             </div>
             
             {["goals", "wins", "losses", "draws"].map((field) => (
               <div key={field} className="space-y-2">
-                <label htmlFor={field} className="block text-blue-400 font-medium capitalize">
+                <label htmlFor={field} className="label">
                   {field}
                 </label>
                 <input
@@ -151,18 +149,14 @@ export default function AddPlayer() {
                   onChange={handleChange}
                   min="0"
                   placeholder="0"
-                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                           focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
-                           transition-colors hover:border-gray-600 appearance-none"
+                  className="input-field"
                 />
               </div>
             ))}
             
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-4 rounded-lg shadow-md 
-                       hover:bg-blue-700 transition-all duration-300 mt-8
-                       font-semibold text-lg"
+              className="btn-primary text-lg py-4 mt-8"
             >
               Add Player
             </button>

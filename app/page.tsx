@@ -6,17 +6,20 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8">        
+    <main className="h-screen text-white flex flex-col items-center justify-center px-4 relative -mt-[84px]">
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/60 z-0"></div>
+      
       <div className="z-10 w-full max-w-6xl flex flex-col items-center gap-4 sm:gap-8 text-center">
-        <h1 className="text-4xl sm:text-6xl font-bold">Futebolada</h1>
-        <p className="text-lg sm:text-2xl font-mono max-w-3xl px-4">
-          Welcome to Futebolada - Your Football Community
+        <h1 className="text-4xl sm:text-6xl font-bold text-accent drop-shadow-lg">Futeba</h1>
+        <p className="text-lg sm:text-2xl font-mono max-w-3xl px-4 text-white drop-shadow-md">
+          Welcome to Futeba - Your Football Community
         </p>
         <button 
           onClick={handleGetStarted} 
-          className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition-colors"
+          className="btn-primary max-w-xs shadow-lg"
         >
-          Get Started
+          See what's happening
         </button>
       </div>
     </main>

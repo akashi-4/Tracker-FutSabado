@@ -2,7 +2,35 @@
 import { useState, useEffect } from "react";
 import type { Player } from "../../../types/playerType";
 
-export default function ShowStats() {
+function StatCard({ title, players }: { title: string; players: { name: string; value: number }[] }) {
+  return (
+    <div className="stats-card">
+      <h3 className="page-title">{title}</h3>
+      <ul className="space-y-3">
+        {players.length > 0 ? (
+          players.slice(0, 10).map((player, index) => (
+            <li
+              key={player.name}
+              className="stats-item"
+            >
+              <span className="flex items-center">
+                <span className="text-muted mr-3">#{index + 1}</span>
+                <span className="text-white">{player.name}</span>
+              </span>
+              <span className="text-accent font-semibold">
+                {player.value}
+              </span>
+            </li>
+          ))
+        ) : (
+          <p className="text-muted italic">No data available</p>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+export default function PlayerStatsPage() {
   const [topScorers, setTopScorers] = useState<Player[]>([]);
   const [topMatches, setTopMatches] = useState<Player[]>([]);
   const [topWinners, setTopWinners] = useState<Player[]>([]);
@@ -21,40 +49,18 @@ export default function ShowStats() {
     fetchStats();
   }, []);
 
-  const StatCard = ({ title, data, statKey }: { title: string; data: Player[]; statKey: keyof Player }) => (
-    <div className="bg-gray-900 p-6 rounded-xl border border-blue-900 shadow-lg transition-transform hover:scale-102 hover:border-blue-700">
-      <h3 className="text-xl font-bold mb-4 text-blue-400">{title}</h3>
-      <ul className="space-y-3">
-        {data.length > 0 ? (
-          data.map((player, index) => (
-            <li 
-              key={player.name}
-              className="flex justify-between items-center p-3 rounded-lg bg-gray-800 border border-gray-700 hover:border-blue-800 transition-colors"
-            >
-              <span className="flex items-center">
-                <span className="text-gray-400 mr-3">#{index + 1}</span>
-                <span className="text-white">{player.name}</span>
-              </span>
-              <span className="text-blue-400 font-semibold">
-                {player[statKey]} {statKey === 'goals' ? 'goals' : statKey === 'matchesPlayed' ? 'matches' : statKey === 'losses' ? 'losses' : 'wins'}
-              </span>
-            </li>
-          ))
-        ) : (
-          <p className="text-gray-400 italic">No data available</p>
-        )}
-      </ul>
-    </div>
-  );
-
   return (
-    <div className="p-4 md:p-8">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-blue-400">Player Statistics</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <StatCard title="Top Scorers" data={topScorers} statKey="goals" />
-        <StatCard title="Most Matches" data={topMatches} statKey="matchesPlayed" />
-        <StatCard title="Most Wins" data={topWinners} statKey="wins" />
-        <StatCard title="Most Losses" data={topLosers} statKey="losses" />
+    <div className="page-container">
+      <div className="max-w-6xl mx-auto">
+        <div className="card">
+          <h2 className="page-title-large text-center">Player Statistics</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <StatCard title="Top Scorers" players={topScorers.map(player => ({ name: player.name, value: player.goals }))} />
+              <StatCard title="Most Matches" players={topMatches.map(player => ({ name: player.name, value: player.matchesPlayed }))} />
+              <StatCard title="Most Wins" players={topWinners.map(player => ({ name: player.name, value: player.wins }))} />
+              <StatCard title="Most Losses" players={topLosers.map(player => ({ name: player.name, value: player.losses }))} />
+            </div>
+        </div>
       </div>
     </div>
   );

@@ -14,11 +14,15 @@ export default function EditPlayerButton({ player, onEdit }: Props) {
 
   if (session?.user.role !== "admin") return null;
 
+  const handleClick = () => {
+    onEdit(player);
+  };
+
   return (
     <button
-      onClick={() => onEdit(player)}
-      className="p-2 rounded-lg bg-gray-700 hover:bg-blue-600"
-      title="Edit player"
+      onClick={handleClick}
+      className="btn-icon-edit"
+      title="Edit Player"
     >
       <Pencil className="w-4 h-4" />
     </button>

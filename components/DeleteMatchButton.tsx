@@ -15,11 +15,15 @@ export default function DeleteMatchButton({ match, onDelete }: Props) {
   // Hide the control unless the user is logged-in and has role "admin"
   if (session?.user.role !== "admin") return null;
 
+  const handleClick = () => {
+    onDelete(match);
+  };
+
   return (
     <button
-      onClick={() => onDelete(match)}
-      className="p-2 rounded-lg bg-gray-700 hover:bg-red-600"
-      title="Delete match"
+      onClick={handleClick}
+      className="btn-icon-danger"
+      title="Delete Match"
     >
       <Trash2 className="w-4 h-4" />
     </button>

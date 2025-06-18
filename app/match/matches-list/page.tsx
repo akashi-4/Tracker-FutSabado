@@ -164,51 +164,128 @@ function Page() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white py-12 px-6">
+        <div className="page-container">
             <div className="max-w-4xl mx-auto">
-                <div className="bg-gray-900 p-8 rounded-xl border border-blue-900 shadow-lg">
-                    <h2 className="text-3xl font-bold text-blue-400 mb-8">Matches List</h2>
+                <div className="card">
+                    <h2 className="page-title-large">Matches List</h2>
                     <div className="space-y-4">
                         {matches.length > 0 ? (
                             matches.map((match) => (
                                 <div 
                                     key={match._id.toString()} 
-                                    className="bg-gray-800 p-4 rounded-lg border border-gray-700 
-                                            hover:border-blue-700 transition-all duration-300"
+                                    className="bg-gray-800/90 p-6 rounded-lg border border-gray-700 hover:border-blue-800 transition-colors"
                                 >
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-gray-400 text-sm">
+                                    {/* Header with date and delete button */}
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="text-muted text-sm">
                                             {new Date(match.date).toLocaleDateString()}
-                                        </span>
-                                        <span className="text-2xl font-bold text-blue-400">
-                                            {match.teamA.score} - {match.teamB.score}
                                         </span>
                                         <DeleteMatchButton match={match} onDelete={handleDeleteClick} />
                                     </div>
-                                    
-                                    <div className="flex justify-between mt-4">
+
+                                    {/* Teams and Score */}
+                                    <div className="grid grid-cols-3 gap-4 items-center mb-6">
                                         {/* Team A */}
-                                        <div className="w-[45%]">
-                                            {match.teamA.players.filter(p => p !== null).map((player) => (
-                                                <div key={player.name} className="text-gray-300">
-                                                    {player.name}
-                                                </div>
-                                            ))}
+                                        <div className="text-left">
+                                            <h3 className="text-accent font-bold text-lg mb-2">Team A</h3>
+                                            <div className="space-y-1">
+                                                {match.teamA.players.filter(p => p !== null).map((player) => (
+                                                    <div key={player.name} className="text-white text-md">
+                                                        {player.name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Score */}
+                                        <div className="text-center">
+                                            <div className="text-4xl font-bold text-accent">
+                                                {match.teamA.score} - {match.teamB.score}
+                                            </div>
                                         </div>
 
                                         {/* Team B */}
-                                        <div className="w-[45%] text-right">
-                                            {match.teamB.players.filter(p => p !== null).map((player) => (
-                                                <div key={player.name} className="text-gray-300">
-                                                    {player.name}
-                                                </div>
-                                            ))}
+                                        <div className="text-right">
+                                            <h3 className="text-accent font-bold text-lg mb-2">Team B</h3>
+                                            <div className="space-y-1">
+                                                {match.teamB.players.filter(p => p !== null).map((player) => (
+                                                    <div key={player.name} className="text-white text-md">
+                                                        {player.name}
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {/* Goals */}
+                                    {match.goals && match.goals.length > 0 && (
+                                        <div className="border-t border-gray-700 pt-4">
+                                            <h4 className="text-accent font-semibold mb-4 text-center">⚽ Goals Scored ⚽</h4>
+                                            <div className="grid grid-cols-2 gap-6">
+                                                {/* Team A Goals */}
+                                                <div className="text-left">
+                                                    <h5 className="text-accent font-medium mb-3">Team A</h5>
+                                                    <div className="space-y-2">
+                                                        {match.goals
+                                                            .filter(goal => {
+                                                                const scorerName = typeof goal.scorer === 'string' ? goal.scorer : goal.scorer.name;
+                                                                return match.teamA.players.some(p => p?.name === scorerName);
+                                                            })
+                                                            .map((goal, index) => (
+                                                                <div key={index} className="bg-gray-700 px-3 py-1 rounded-lg text-left">
+                                                                    <span className="text-white text-sm">
+                                                                        {typeof goal.scorer === 'string' ? goal.scorer : goal.scorer.name}
+                                                                    </span>
+                                                                    <span className="text-accent ml-2 text-sm">
+                                                                        {goal.count > 7 ? `${goal.count}x⚽` : '⚽'.repeat(goal.count)}
+                                                                    </span>
+                                                                </div>
+                                                            ))
+                                                        }
+                                                        {match.goals.filter(goal => {
+                                                            const scorerName = typeof goal.scorer === 'string' ? goal.scorer : goal.scorer.name;
+                                                            return match.teamA.players.some(p => p?.name === scorerName);
+                                                        }).length === 0 && (
+                                                            <div className="text-muted text-sm italic text-left">No goals</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                {/* Team B Goals */}
+                                                <div className="text-right">
+                                                    <h5 className="text-accent font-medium mb-3">Team B</h5>
+                                                    <div className="space-y-2">
+                                                        {match.goals
+                                                            .filter(goal => {
+                                                                const scorerName = typeof goal.scorer === 'string' ? goal.scorer : goal.scorer.name;
+                                                                return match.teamB.players.some(p => p?.name === scorerName);
+                                                            })
+                                                            .map((goal, index) => (
+                                                                <div key={index} className="bg-gray-700 px-3 py-1 rounded-lg text-right">
+                                                                    <span className="text-accent mr-2 text-sm">
+                                                                        {goal.count > 5 ? `${goal.count}x⚽` : '⚽'.repeat(goal.count)}
+                                                                    </span>
+                                                                    <span className="text-white text-sm">
+                                                                        {typeof goal.scorer === 'string' ? goal.scorer : goal.scorer.name}
+                                                                    </span>
+                                                                </div>
+                                                            ))
+                                                        }
+                                                        {match.goals.filter(goal => {
+                                                            const scorerName = typeof goal.scorer === 'string' ? goal.scorer : goal.scorer.name;
+                                                            return match.teamB.players.some(p => p?.name === scorerName);
+                                                        }).length === 0 && (
+                                                            <div className="text-muted text-sm italic text-right">No goals</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         ) : (
-                            <p className="text-gray-400">No matches found</p>
+                            <p className="text-muted text-center italic">No matches to display</p>
                         )}
                     </div>
                 </div>
@@ -218,7 +295,7 @@ function Page() {
             <ConfirmDialog
                 isOpen={deleteDialog.isOpen}
                 title="Delete Match"
-                message={`Are you sure you want to delete this match? This action cannot be undone and will affect player statistics.`}
+                message={`Are you sure you want to delete this match? This will also update all player statistics. This action cannot be undone.`}
                 confirmText="Delete"
                 cancelText="Cancel"
                 variant="danger"
@@ -234,7 +311,7 @@ function Page() {
                 onClose={hideToast}
             />
         </div>
-    )
+    );
 }
 
 export default Page;

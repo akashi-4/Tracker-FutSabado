@@ -15,7 +15,7 @@ export async function GET(
             );
         }
 
-        const db = await connect2DB();
+        const { db } = await connect2DB();
         const player = await db.collection("players").findOne({ name });
 
         if (!player) {

@@ -3,7 +3,7 @@ import { Goal } from "./goalType";
 import { ObjectId } from "mongodb";
 
 export interface Match {
-    _id: ObjectId;
+    _id?: ObjectId;
     date: Date;
     teamA: {
         players: Player[];

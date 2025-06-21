@@ -5,9 +5,9 @@ import { getServerSession } from "next-auth/next";
 
 export async function GET() {
   try {
-    const db = await connect2DB();
+    const { db } = await connect2DB();
     
-    // Execute all queries in parallel using Promise.all
+    // Execute all queries in parallel
     const [topScorers, topMatches, topWinners, topLosers] = await Promise.all([
       db.collection("players").aggregate([
         { $sort: { goals: -1 } },
@@ -56,24 +56,34 @@ export async function PATCH(req: Request) {
   }
 
   try {
-    const { name, updates } = await req.json();
-    const db = await connect2DB();
+    const updates = await req.json();
 
-    // Update the player
-    const result = await db.collection("players").updateOne(
-      { name },
-      { $set: updates }
-    );
-
-    if (result.modifiedCount === 0) {
-      return NextResponse.json({ message: `Failed to update player ${name}` }, { status: 400 });
+    if (!Array.isArray(updates)) {
+      return NextResponse.json({ message: "Invalid payload: expected an array of updates." }, { status: 400 });
     }
 
-    return NextResponse.json({ message: "Player updated successfully" });
+    const { db } = await connect2DB();
+
+    const operations = updates.map(update => ({
+      updateOne: {
+        filter: { name: update.name },
+        update: { $inc: update.updates }
+      }
+    }));
+
+    if (operations.length > 0) {
+      const result = await db.collection("players").bulkWrite(operations);
+      
+      if (result.modifiedCount !== operations.length) {
+        console.warn(`Bulk update mismatch: expected ${operations.length} updates, but ${result.modifiedCount} were modified.`);
+      }
+    }
+
+    return NextResponse.json({ message: "Players updated successfully" });
   } catch (error) {
-    console.error('Error updating player:', error);
+    console.error('Error updating players:', error);
     return NextResponse.json({ 
-      message: `Error updating player: ${error instanceof Error ? error.message : 'Unknown error'}`
+      message: `Error updating players: ${error instanceof Error ? error.message : 'Unknown error'}`
     }, { status: 500 });
   }
 }

@@ -18,7 +18,10 @@ if (process.env.NODE_ENV === "development") {
 // Named helper used by legacy API routes
 export const connect2DB = async () => {
   const client = await clientPromise;
-  return client.db("futebolada");
+  return { 
+    client, 
+    db: client.db("futebolada") 
+  };
 };
 
 export default clientPromise;

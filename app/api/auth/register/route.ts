@@ -3,9 +3,8 @@ import clientPromise from "../../../../config/db";
 import { hash } from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { email, password, role } = await req.json();
+  const { email, password } = await req.json();
 
-  // Basic validation
   if (
     typeof email !== "string" ||
     typeof password !== "string" ||

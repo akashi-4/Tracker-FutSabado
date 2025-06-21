@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import type { Match } from "../../../types/matchType";
-import type { Player } from "../../../types/playerType";
 import DeleteMatchButton from "../../../components/DeleteMatchButton";
 import Toast, { useToast } from "../../../components/Toast";
 import ConfirmDialog from "../../../components/ConfirmDialog";
@@ -25,84 +24,6 @@ function Page() {
         fetchMatches();
     }, []);
 
-    const handlePlayerStatsWhenMatchIsDeleted = async (match: Match, player: Player) => {
-        try {
-            console.log('Full match object:', match);
-            console.log('Match goals structure:', JSON.stringify(match.goals, null, 2));
-            const playerWasInTeamA = match.teamA.players.some(p => p?.name === player.name);
-            const playerWasInTeamB = match.teamB.players.some(p => p?.name === player.name);
-            
-            if (!playerWasInTeamA && !playerWasInTeamB) return;
-
-            const playerRes = await fetch(`/api/players/${encodeURIComponent(player.name)}`);
-            if (!playerRes.ok) {
-                throw new Error(`Failed to fetch player stats: ${playerRes.statusText}`);
-            }
-            
-            const currentPlayer = await playerRes.json();
-            if (!currentPlayer) {
-                throw new Error(`Player ${player.name} not found`);
-            }
-
-            const playerGoal = match.goals.find(g => 
-                (typeof g.scorer === 'string' ? g.scorer : g.scorer.name) === player.name
-            );
-            
-            const goalsInThisMatch = playerGoal?.count || 0;
-            console.log('Goals in this match:', goalsInThisMatch);
-
-            const winsInThisMatch = getHowManyWinsThatPlayerGotInThisMatch(match, player);
-            const lossesInThisMatch = getHowManyLossesThatPlayerGotInThisMatch(match, player);
-            const drawsInThisMatch = getHowManyDrawsThatPlayerGotInThisMatch(match, player);
-
-            console.log('Match stats for', player.name, {
-                goalsInThisMatch,
-                winsInThisMatch,
-                lossesInThisMatch,
-                drawsInThisMatch
-            });
-
-            const updates = {
-                goals: Math.max(0, currentPlayer.goals - goalsInThisMatch),
-                matchesPlayed: Math.max(0, currentPlayer.matchesPlayed - 1),
-                wins: Math.max(0, currentPlayer.wins - winsInThisMatch),
-                losses: Math.max(0, currentPlayer.losses - lossesInThisMatch),
-                draws: Math.max(0, currentPlayer.draws - drawsInThisMatch)
-            };
-
-            console.log('Updating stats for', player.name, updates);
-
-            const updateRes = await fetch("/api/players/stats", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    name: player.name, 
-                    updates 
-                }),
-            });
-
-            if (!updateRes.ok) {
-                const errorData = await updateRes.json();
-                throw new Error(errorData.message || "Error updating player stats");
-            }
-        } catch (error) {
-            console.error('Error handling player stats:', error);
-            throw error;
-        }
-    };
-
-    const handlePlayersStatsWhenMatchIsDeleted = async (match: Match) => {
-        const teamAPlayers = match.teamA.players.filter(player => player !== null);
-        const teamBPlayers = match.teamB.players.filter(player => player !== null);
-        
-        for (const player of teamAPlayers) {
-            await handlePlayerStatsWhenMatchIsDeleted(match, player);
-        }
-        for (const player of teamBPlayers) {
-            await handlePlayerStatsWhenMatchIsDeleted(match, player);
-        }
-    };
-
     const handleDeleteClick = (match: Match) => {
         setDeleteDialog({ isOpen: true, match });
     };
@@ -114,7 +35,6 @@ function Page() {
         setDeleteDialog({ isOpen: false, match: null });
 
         try {
-            await handlePlayersStatsWhenMatchIsDeleted(match);
             const res = await fetch("/api/matches", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
@@ -136,32 +56,6 @@ function Page() {
     const handleDeleteCancel = () => {
         setDeleteDialog({ isOpen: false, match: null });
     };
-
-    const getHowManyWinsThatPlayerGotInThisMatch = (match: Match, player: Player) => {
-        const playerWasInTeamA = match.teamA.players.some(p => p?.name === player.name);
-        const playerWasInTeamB = match.teamB.players.some(p => p?.name === player.name);
-        
-        if (playerWasInTeamA && match.teamA.score > match.teamB.score) return 1;
-        if (playerWasInTeamB && match.teamB.score > match.teamA.score) return 1;
-        return 0;
-    }
-
-    const getHowManyLossesThatPlayerGotInThisMatch = (match: Match, player: Player) => {
-        const playerWasInTeamA = match.teamA.players.some(p => p?.name === player.name);
-        const playerWasInTeamB = match.teamB.players.some(p => p?.name === player.name);
-        
-        if (playerWasInTeamA && match.teamA.score < match.teamB.score) return 1;
-        if (playerWasInTeamB && match.teamB.score < match.teamA.score) return 1;
-        return 0;
-    }
-
-    const getHowManyDrawsThatPlayerGotInThisMatch = (match: Match, player: Player) => {
-        const playerWasInTeamA = match.teamA.players.some(p => p?.name === player.name);
-        const playerWasInTeamB = match.teamB.players.some(p => p?.name === player.name);
-        
-        if ((playerWasInTeamA || playerWasInTeamB) && match.teamA.score === match.teamB.score) return 1;
-        return 0;
-    }
 
     return (
         <div className="page-container">

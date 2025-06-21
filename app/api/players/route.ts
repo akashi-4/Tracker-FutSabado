@@ -30,7 +30,7 @@ const PlayerSchema = z.object({
 });
 
 export async function GET() {
-  const db = await connect2DB();
+  const { db } = await connect2DB();
   const players = await db.collection("players").find().toArray();
   return NextResponse.json(players);
 }
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
   try {
     const body = PlayerSchema.parse(await req.json());
-    const db = await connect2DB();
+    const { db } = await connect2DB();
 
     // Check if player already exists
     const existingPlayer = await db.collection("players").findOne({ name: body.name });
@@ -69,7 +69,7 @@ export async function DELETE(req: Request) {
 
   try {
     const { name } = await req.json(); // Receber o nome do jogador a ser deletado
-    const db = await connect2DB();
+    const { db } = await connect2DB();
 
     // Deletar o jogador pelo nome
     const result = await db.collection("players").deleteOne({ name });
@@ -93,7 +93,7 @@ export async function PATCH(req: Request) {
 
   try {
     const { name, updates } = await req.json();
-    const db = await connect2DB();
+    const { db } = await connect2DB();
 
     // Update the player
     const result = await db.collection("players").updateOne(

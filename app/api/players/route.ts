@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { connect2DB } from "../../../config/db";
 import { authOptions } from "../../../lib/auth";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
+import { createPlayer, deletePlayer, getPlayerByName, getPlayers, updatePlayer } from "../../../handlers/playerHandlers";
+import { Player } from "../../../types/playerType";
 
 const PlayerSchema = z.object({
   name: z.string().trim().min(1).max(50)
-          .regex(/^[\w\s-]+$/, "Name contains invalid chars"),
+          .regex(/^[a-zA-Z][a-zA-Z\s]*$/, "Name must start with a letter and contain only letters and spaces"),
   goals: z.preprocess(
     (val) => val === "" || val === undefined ? 0 : Number(val),
     z.number().int().min(0)
@@ -30,9 +31,12 @@ const PlayerSchema = z.object({
 });
 
 export async function GET() {
-  const { db } = await connect2DB();
-  const players = await db.collection("players").find().toArray();
-  return NextResponse.json(players);
+  try {
+    const players = await getPlayers();
+    return NextResponse.json(players);
+  } catch (error) {
+    return NextResponse.json({ message: "Error fetching players", error }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
@@ -44,16 +48,13 @@ export async function POST(req: Request) {
 
   try {
     const body = PlayerSchema.parse(await req.json());
-    const { db } = await connect2DB();
 
-    // Check if player already exists
-    const existingPlayer = await db.collection("players").findOne({ name: body.name });
+    const existingPlayer = await getPlayerByName(body.name);
     if (existingPlayer) {
       return NextResponse.json({ message: "Player name must be unique!" }, { status: 400 });
     }
 
-    // Insert the player into the database
-    await db.collection("players").insertOne(body);
+    await createPlayer(body as Player);
     return NextResponse.json({ message: "Player added successfully" }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ message: "Error adding player", error }, { status: 500 });
@@ -68,11 +69,9 @@ export async function DELETE(req: Request) {
   }
 
   try {
-    const { name } = await req.json(); // Receber o nome do jogador a ser deletado
-    const { db } = await connect2DB();
+    const { name } = await req.json();
 
-    // Deletar o jogador pelo nome
-    const result = await db.collection("players").deleteOne({ name });
+    const result = await deletePlayer(name);
 
     if (result.deletedCount === 1) {
       return NextResponse.json({ message: "Player deleted successfully" });
@@ -93,13 +92,8 @@ export async function PATCH(req: Request) {
 
   try {
     const { name, updates } = await req.json();
-    const { db } = await connect2DB();
 
-    // Update the player
-    const result = await db.collection("players").updateOne(
-      { name },
-      { $set: updates }
-    );
+    const result = await updatePlayer(name, updates);
 
     if (result.modifiedCount === 0) {
       return NextResponse.json({ message: `Failed to update player ${name}` }, { status: 400 });

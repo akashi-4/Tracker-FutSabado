@@ -21,3 +21,9 @@ export async function deleteMatch(id: string) {
     });
     return result;
 } 
+
+export async function getMatchHistory() {
+    const { db } = await connect2DB();
+    const matches = await db.collection("matches").find().sort({ date: -1 }).toArray();
+    return matches;
+}

@@ -25,9 +25,7 @@ export default function AddPlayer() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // Check if the field is not the name field and if the value is not empty
     if (name !== "name" && value !== "") {
-      // Check if the value is a number
       if (!/^\d+$/.test(value)) {
         return;
       }
@@ -40,6 +38,21 @@ export default function AddPlayer() {
   };
 
   const validateForm = () => {
+    if (!player.name.trim()) {
+      setError("Player name is required");
+      return false;
+    }
+    
+    if (player.name.trim().length > 50) {
+      setError("Player name must be 50 characters or less");
+      return false;
+    }
+    
+    if (!/^[a-zA-Z][a-zA-Z\s]+$/.test(player.name.trim())) {
+      setError("Name must start with a letter and contain only letters and spaces");
+      return false;
+    }
+
     const numericFields = ["goals", "wins", "losses", "draws", "matchesPlayed"];
     for (const field of numericFields) {
       if (player[field as keyof PlayerForm] !== "" && !/^\d+$/.test(player[field as keyof PlayerForm])) {

@@ -1,37 +1,6 @@
-// Tests for match handler functions
-// These are easier to test than the full route handlers
-
-// Test getMatches()
-// Test createMatch()
-// Test deleteMatch()
-
-import { getMatches, createMatch, deleteMatch } from "../../handlers/matchHandlers";
+import { getMatches, createMatch, deleteMatch, getMatchHistory } from "../../handlers/matchHandlers";
 import { ObjectId } from "mongodb";
 
-// Example test structure:
-// describe('getMatches', () => {
-//   it('should return all matches from database', async () => {
-//     // Your test here
-//   });
-// });
-
-// describe('createMatch', () => {
-//   it('should create a new match in database', async () => {
-//     // Your test here
-//   });
-// });
-
-// describe('deleteMatch', () => {
-//   it('should delete match by id', async () => {
-//     // Your test here
-//   });
-//   
-//   it('should return deletedCount 0 if match not found', async () => {
-//     // Your test here
-//   });
-// });
-
-// This is one mock that can return different values based on the test.
 const mockDB = {
     find: jest.fn(),
     insertOne: jest.fn(),
@@ -45,7 +14,7 @@ jest.mock('../../config/db', ()=> ({
         }
     }))
 }));
-// Create mock data - this is what our fake database will return
+
 const mockMatchData = [
   {
     _id: "mock-id-1",
@@ -72,6 +41,19 @@ const mockMatchData = [
       score: 4
     },
     goals: []
+  },
+  {
+    _id: "mock-id-3",
+    date: new Date("2024-01-17"),
+    teamA: {
+      players: ["Player9", "Player10"],
+      score: 2
+    },
+    teamB: { 
+      players: ["Player11", "Player12"],
+      score: 3
+    },
+    goals: []
   }
 ];
 
@@ -83,7 +65,6 @@ const newMatchNoId = {
 }
 
 describe('Match Handlers', () => {
-    // Before each test we reset mock
     beforeEach(()=> {
         jest.clearAllMocks();
     });
@@ -199,6 +180,52 @@ describe('Match Handlers', () => {
             // Not await because we want to test the error
             const result = deleteMatch(id);
 
+            expect(result).rejects.toThrow('DB Connection Error');
+        });
+    });
+    describe('getMatchHistory', () => {
+        it('should return all matches from database sorted by date', async () => {
+            // Create sorted mock data (newest first)
+            const sortedMockData = [...mockMatchData].sort((a, b) => b.date.getTime() - a.date.getTime());
+            
+            // Mock the chained methods: find().sort().toArray()
+            mockDB.find.mockReturnValue({
+                sort: jest.fn().mockReturnValue({
+                    toArray: jest.fn().mockResolvedValue(sortedMockData)
+                })
+            });
+            
+            const result = await getMatchHistory();
+            
+            // Check that find and sort were called
+            expect(mockDB.find).toHaveBeenCalledTimes(1);
+            expect(mockDB.find().sort).toHaveBeenCalledWith({ date: -1 });
+            
+            // Check the result is sorted correctly (newest first)
+            expect(result).toEqual(sortedMockData);
+        });
+
+        it('should return an empty array if no matches are found', async () => {
+            mockDB.find.mockReturnValue({
+                sort: jest.fn().mockReturnValue({
+                    toArray: jest.fn().mockResolvedValue([])
+                })
+            });
+            
+            const result = await getMatchHistory();
+            
+            expect(mockDB.find).toHaveBeenCalledTimes(1);
+            expect(result).toEqual([]);
+        });
+
+        it('should return an error if the database connection fails', async () => {
+            mockDB.find.mockReturnValue({
+                sort: jest.fn().mockReturnValue({
+                    toArray: jest.fn().mockRejectedValue(new Error('DB Connection Error'))
+                })
+            });
+            
+            const result = getMatchHistory();
             expect(result).rejects.toThrow('DB Connection Error');
         });
     });

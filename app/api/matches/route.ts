@@ -6,8 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMatches, createMatch, deleteMatch } from "../../../handlers/matchHandlers";
 
 export async function GET() {
-    const matches = await getMatches();
-    return NextResponse.json(matches);
+    try {
+        const matches = await getMatches();
+        return NextResponse.json(matches);
+    } catch (error) {
+        return NextResponse.json({ message: "Error fetching matches", error }, { status: 500 });
+    }
 }
 
 export async function POST(req: Request) {

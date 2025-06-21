@@ -1,5 +1,5 @@
 import { connect2DB } from '../config/db'
-import { ObjectId } from 'mongodb'
+import { Player } from '../types/playerType';
 
 export async function getPlayers() {
     const { db } = await connect2DB();
@@ -7,7 +7,7 @@ export async function getPlayers() {
     return players;
 }
 
-export async function createPlayer(player: any) {
+export async function createPlayer(player: Player) {
     const { db } = await connect2DB();
     const result = await db.collection("players").insertOne(player);
     return result;
@@ -19,9 +19,14 @@ export async function getPlayerByName(name: string) {
     return player;
 }
 
-export async function getPlayerStats() {
+export async function deletePlayer(name: string) {
     const { db } = await connect2DB();
-    // Add your stats aggregation logic here
-    const stats = await db.collection("players").find().toArray();
-    return stats;
-} 
+    const result = await db.collection("players").deleteOne({ name });
+    return result;
+}
+
+export async function updatePlayer(name: string, updates: Partial<Player>) {
+    const { db } = await connect2DB();
+    const result = await db.collection("players").updateOne({ name }, { $set: updates });
+    return result;
+}
